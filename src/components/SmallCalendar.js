@@ -7,7 +7,8 @@ import { getMonth } from "../utils";
 const SmallCalendar = () => {
   const [currentMonth, setCurrentMonth] = useState(getMonth());
   const [currentMonthIdx, setCurrentMonthIdx] = useState(moment().month());
-  const { monthIndex } = useContext(GlobalContext);
+  const { monthIndex, setSmallCalendarMonth, selectedDay, setSelectedDay } =
+    useContext(GlobalContext);
 
   useEffect(() => {
     setCurrentMonth(getMonth(currentMonthIdx));
@@ -26,9 +27,17 @@ const SmallCalendar = () => {
   };
 
   const getCurrentDay = (day) => {
-    return day.format("DD-MM-YY") === moment().format("DD-MM-YY")
-      ? "bg-blue-500 text-white rounded-full"
-      : "";
+    const format = "DD-MM-YY";
+    const nowDay = moment().format(format);
+    const currentDay = day.format(format);
+    const daySelected = selectedDay && selectedDay.format(format);
+    if (nowDay === currentDay) {
+      return "bg-blue-500 text-white rounded-full";
+    } else if (currentDay === daySelected) {
+      return "bg-blue-100 text-blue-600 rounded-full font-bold";
+    } else {
+      return "";
+    }
   };
 
   return (
@@ -39,16 +48,18 @@ const SmallCalendar = () => {
             "MMMM YYYY"
           )}
         </p>
-        <button onClick={handlePrevMonth}>
-          <span className="material-icons-outlined cursor-pointer text-gray-600 mx-2">
-            chevron_left
-          </span>
-        </button>
-        <button onClick={handleNextMonth}>
-          <span className="material-icons-outlined cursor-pointer text-gray-600 mx-2">
-            chevron_right
-          </span>
-        </button>
+        <div>
+          <button onClick={handlePrevMonth}>
+            <span className="material-icons-outlined cursor-pointer text-gray-600 mx-2">
+              chevron_left
+            </span>
+          </button>
+          <button onClick={handleNextMonth}>
+            <span className="material-icons-outlined cursor-pointer text-gray-600 mx-2">
+              chevron_right
+            </span>
+          </button>
+        </div>
       </header>
       <div className="grid grid-cols-7 grid-rows-6">
         {currentMonth[0].map((day, idx) => (
@@ -59,7 +70,14 @@ const SmallCalendar = () => {
         {currentMonth.map((row, i) => (
           <React.Fragment key={i}>
             {row.map((day, idx) => (
-              <button key={idx} className={`py-1 w-full ${getCurrentDay(day)}`}>
+              <button
+                key={idx}
+                className={`py-1 w-full ${getCurrentDay(day)}`}
+                onClick={() => {
+                  setSmallCalendarMonth(currentMonthIdx);
+                  setSelectedDay(day);
+                }}
+              >
                 <span className="text-sm">{day.format("D")}</span>
               </button>
             ))}

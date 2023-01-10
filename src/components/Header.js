@@ -1,4 +1,4 @@
-import moment from "moment";
+import dayjs from "dayjs";
 import { useContext } from "react";
 import GlobalContext from "../context/GlobalContext";
 
@@ -14,7 +14,11 @@ const Header = () => {
   };
 
   const handleToday = () => {
-    setMonthIndex(moment().month());
+    setMonthIndex(
+      monthIndex === dayjs().month()
+        ? monthIndex + Math.random()
+        : dayjs().month()
+    );
   };
 
   return (
@@ -35,7 +39,7 @@ const Header = () => {
         </span>
       </button>
       <h2 className="ml-4 text-xl text-gray-500 font-bold">
-        {moment(new Date(moment().year(), monthIndex)).format("MMMM YYYY")}
+        {dayjs(new Date(dayjs().year(), monthIndex)).format("MMMM YYYY")}
       </h2>
     </header>
   );
